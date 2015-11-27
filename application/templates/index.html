@@ -1,0 +1,64 @@
+
+{% extends "base.html" %}
+{% block page_title %}LRS stalking{% endblock %}
+
+
+{% block body_content %}
+    <div class="grid-row">
+      <div class="column-two-thirds">
+        <h1 class="heading-large">LRS stalking</h1>
+
+        <table>
+          <thead>
+            <th>who</th>
+            <th>did</th>
+            <th>what</th>
+            <th>where</th>
+            <th>exactly</th>
+            <th>and when</th>
+            <th>with a result</th>
+            <th></th>
+          </thead>
+
+          <tbody>
+            {% for statement in statements %}
+            <tr>
+              <td>{{ statement.actor.name }}</td>
+              <td>{{ statement.verb.name }}</td>
+              <td>{{ statement.object.name }}</td>
+              <td>
+                {% if statement.activities %}
+                  {{ (statement.activities|first).name }}
+                {% endif %}
+              </td>
+              <td>
+                {% if statement.activities %}
+                  {{ (statement.activities|last).name }}
+                {% endif %}
+              </td>
+              <td>{{ statement.when }}</td>
+              <td>
+                {% if statement.result %} 
+                  {{ statement.result.score.raw }}
+                {% endif %}
+              </td>
+              <td><a href="stalk/{{statement.statementId}}">details</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        
+      </div>
+    </div>
+
+  <div class="panel-indent panel-indent-info stats">
+    <ul>
+      <li>STATS FOR CATS:</li>
+      <li>all calls go to: <a href="{{ apiUrl }}">{{ apiUrl }}</a></li>
+      <li>username: {{ username }}</li>
+      <li><a href="{{ stalkJsonUrl }}">see this request as JSON</a></li>
+    </ul>
+  </div>
+
+{% endblock %}
+
