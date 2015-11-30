@@ -77,27 +77,28 @@ def userHistory(username):
 
     jsonData = response.json()["result"]
     user = [usr for usr in userData if usr["username"] == username][0]
-    return render_template('user_history.html',
-        statements= jsonData, 
-        user= user)
+    return render_template('user_history.html', statements= jsonData, user= user)
 
 @frontend.route('/users/<username>/history/<statementId>')
 def details(username, statementId):
-    payload = [
-      {   
-        "$match": {
-          "statement.id": statementId
-        }
-      },
-      {
-        "$project": {
-          "_id": 0,
-          "statement": 1
-        }  
+  payload = [
+    {   
+      "$match": {
+        "statement.actor.name": username,
+        "statement.id": statementId
       }
-    ]
-    response = queryLRS(payload)
-    return jsonify(response.json())
+    },
+    {
+      "$project": {
+        "_id": 0,
+        "statement": 1
+      }  
+    }
+  ]
+  response = queryLRS(payload)
+  jsonData = response.json()["result"][0]
+  user = [usr for usr in userData if usr["username"] == username][0]
+  return render_template('record.html', record= jsonData, user= user)
 
 
 def queryLRS(payload):

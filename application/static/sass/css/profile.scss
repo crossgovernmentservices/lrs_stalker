@@ -1,0 +1,61 @@
+// See assets.py
+// Even though govuk.css is built for all views, we
+// still include it here for access to SASS variables.
+@import 'govuk';
+
+@import 'common/all';
+
+@import 'components/search';
+@import 'components/current-courses';
+
+.component--finder {
+  @extend %contain-floats;
+  background: $link-colour;
+  color: $page-colour;
+  padding: 5px 10px 5px 15px;
+}
+
+.profile-section {
+//  border-top: 3px solid $link-colour;
+  margin-top: $gutter-half;
+}
+
+.profile-section--top {
+  margin-top: $gutter-half;
+}
+
+.profile {
+  @extend %contain-floats;
+
+  .profile__name {
+    font-size: 24px;
+    line-height: 48px;
+  }
+
+  .profile__image {
+    width: 100px;
+    height: 100px;
+    float: left;
+    margin-right: $gutter-half;
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+}
+
+.profile-section__heading {
+  margin-top: 2*$gutter;
+}
+
+.course-list__item a {
+  text-decoration: none;
+
+  &:visited {
+    color: $link-colour;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

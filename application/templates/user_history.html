@@ -2,59 +2,66 @@
 {% extends "base.html" %}
 {% block page_title %}LRS stalking{% endblock %}
 
-
 {% block body_content %}
-  <a href="/users">< back</a>
+<main id="content" role="main">
+
+  <div class="nav-strip ta-right">
+    <ul>
+      <li>Welcome back {{ user.fullname}} |</li>
+      <li><a href="#">Profile</a> |</li>
+      <li><a href="#">Record</a> |</li>
+      <li><a href="#">PDP</a> |</li>
+      <li><a href="/users">Sign out</a></li>
+    </ul>
+  </div>
+
+  <a href="/users" class="link-back">back to users</a>
 
   <header class="header-group">
     <h1 class="sub-heading">Civil Service Learning</h1>
     <h2 class="heading-xlarge post-sub-heading">Your learning record</h2>
   </header>
 
-  <div class="grid-row">
-    <div class="column-three-thirds">
-      <h1 class="heading-large">LRS stalking</h1>
-
-      <table>
-        <thead>
-          <th>Date</th>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Result</th>
-          <th>Source</th>
-          <th>Activity</th>
-          <th></th>
-        </thead>
-
-        <tbody>
-          {% for statement in statements %}
-          <tr>
-            <td>{{ statement.when | lrs_date_filter  }}</td>
-            <td>{{ statement.object.name }}</td>
-            <td>{{ statement.verb.name }}</td>
-            <td>
-              {% if statement.result %} 
-                {{ statement.result.score.raw }}
-              {% endif %}
-            </td>
-            <td>
-              {% if statement.activities %}
-                {{ (statement.activities|first).name }}
-              {% endif %}
-            </td>
-            <td>
-              {% if statement.activities %}
-                {{ (statement.activities|last).name }}
-              {% endif %}
-            </td>
-            <td><a href="{{url_for('frontend.details', username=user.username, statementId=statement.statementId)}}">details</a></td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      
-    </div>
-  </div>
-
+  <table>
+    <thead>
+      <th>Date</th>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Result</th>
+      <th>Source</th>
+      <th>Activity</th>
+      <th></th>
+    </thead>
+    <tbody>
+      {% for statement in statements %}
+      <tr>
+        <td>{{ statement.when | lrs_date_filter  }}</td>
+        <td>{{ statement.object.name }}</td>
+        <td>{{ statement.verb.name }}</td>
+        <td>
+          {% if statement.result %} 
+            {% if statement.result.score.max %}
+              {{ ((statement.result.score.raw / statement.result.score.max) * 100 ) | round }}%
+            {% else %}
+              {{ statement.result.score.raw }}
+            {% endif %}
+          {% endif %}
+        </td>
+        <td>
+          {% if statement.activities %}
+            {{ (statement.activities|first).name }}
+          {% endif %}
+        </td>
+        <td>
+          {% if statement.activities %}
+            {{ (statement.activities|last).name }}
+          {% endif %}
+        </td>
+        <td><a href="{{url_for('frontend.details', username=user.username, statementId=statement.statementId)}}">details</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</main>
 {% endblock %}
 
