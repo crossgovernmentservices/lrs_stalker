@@ -15,6 +15,12 @@ frontend = Blueprint('frontend', __name__, template_folder='templates')
 username = '8ef61e005f6f2a6df69d827d3a79fe3e3dadb978'
 password = '28f6f89ea6c7bd58b002f84bbaf8b9e04e42bb11'
 url = 'http://csl-lrs.ddns.net/api/v1/statements/aggregate?pipeline=%s'
+
+userData = [
+  { "id": "admin", "username": "admin", "fullname": "Ian Learnalot", "email": "ilearnalot@gmail.com" },
+  { "id": "test1", "username": "test1", "fullname": "Andrew Withirsty", "email": "awit@gmail.com" }
+]
+
 statementProj = {
     "$project": {
       "statementId": "$statement.id",
@@ -49,31 +55,34 @@ statementProj = {
     }
 }
 
+@frontend.route('/users')
+def users():
+  return render_template('users.html', users= userData)
 
-@frontend.route('/stalk')
-def index():
-    payload = [{ }, statementProj]
+
+@frontend.route('/users/<username>/history')
+def userHistory(username):
+    payload = [{   
+        "$match": {
+          "statement.actor.name": username
+        }
+      }, 
+      statementProj,
+      {
+        "$sort": { "when": -1 }
+      }
+    ]
 
     response = queryLRS(payload)
+
     jsonData = response.json()["result"]
-    stalkJsonUrl = url_for('frontend.indexJson')
+    user = [usr for usr in userData if usr["username"] == username][0]
+    return render_template('user_history.html',
+        statements= jsonData, 
+        user= user)
 
-    return render_template('index.html', 
-        statements=jsonData, 
-        apiUrl=url % json.dumps(payload), 
-        stalkJsonUrl=stalkJsonUrl, 
-        username=username)
-
-
-@frontend.route('/stalk-json')
-def indexJson():
-    payload = [{ }, statementProj]
-
-    response = queryLRS(payload)
-    return jsonify(response.json())
-
-@frontend.route('/stalk/<statementId>')
-def details(statementId):
+@frontend.route('/users/<username>/history/<statementId>')
+def details(username, statementId):
     payload = [
       {   
         "$match": {

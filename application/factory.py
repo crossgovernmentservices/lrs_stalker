@@ -6,6 +6,9 @@ from flask import Flask, render_template
 #     #add as needed
 # )
 
+from dateutil.parser import *
+
+
 
 def asset_path_context_processor():
     return {'asset_path': '/static/'}
@@ -20,6 +23,7 @@ def create_app(config_filename):
     register_blueprints(app)
     app.context_processor(asset_path_context_processor)
     register_extensions(app)
+    register_template_filters(app)
     return app
 
 def register_errorhandlers(app):
@@ -38,3 +42,14 @@ def register_blueprints(app):
 def register_extensions(app):
     from application.assets import env
     env.init_app(app)
+
+def register_template_filters(app):
+    app.jinja_env.filters['lrs_date_filter'] = lrs_date_filter
+   
+def lrs_date_filter(date, format=None):
+    date = parse(date)
+    native = date.replace(tzinfo=None)
+    if format is None:
+        format='%d/%m/%Y %H:%M'
+
+    return native.strftime(format) 
