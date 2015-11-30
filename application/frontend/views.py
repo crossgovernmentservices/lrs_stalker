@@ -87,13 +87,7 @@ def details(username, statementId):
         "statement.actor.name": username,
         "statement.id": statementId
       }
-    },
-    {
-      "$project": {
-        "_id": 0,
-        "statement": 1
-      }  
-    }
+    },statementProj
   ]
   response = queryLRS(payload)
   jsonData = response.json()["result"][0]

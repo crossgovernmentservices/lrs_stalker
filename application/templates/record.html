@@ -15,17 +15,12 @@
     </ul>
   </div>
 
-  <a href="{{ url_for('frontend.userHistory', username= user.username) }}" class="link-back">back to search</a>
+  <a href="{{ url_for('frontend.userHistory', username= user.username) }}" class="link-back">back to history</a>
 
   <header class="header-group">
-    <h1 class="sub-heading"><i class="fa fa-laptop"></i><span> e-learning</span></h1>
-    <h2 class="heading-xlarge post-sub-heading">Unconscious bias</h2>
+    <h1 class="sub-heading"><i class="fa fa-laptop"></i><span> {{ record.verb.name }}</span></h1>
+    <h2 class="heading-xlarge post-sub-heading"> {{ record.object.name }}</h2>
   </header>
-
-
-  <p>
-    {{ record }}
-  </p>
 
 
   <div class="grid-row course__description">
@@ -34,71 +29,46 @@
       <div class="text course__description__content">
         <h3 class="heading-large">Description</h3>
 
-        <p>
-          This hour-long course will will help you to understand unconscious bias and how it affects attitudes, behaviours and decision-making.</p>
-
-        <p>  You will learn practical techniques that will help you reduce the impact of unconscious bias and so, ultimately, create a more inclusive and diverse workforce.</p>
-
-        <p>This course is particularly useful if you are a line manager.</p>
+        <p>lorem</p>
 
         <h4 class="heading-medium">Learning Outcomes</h4>
-
-        <p>On completion, you’ll understand:</p>
-
-        <ul class="list-bullet">
-          <li>what unconscious bias is - the concepts and the theory</li>
-          <li>how unconscious bias can influence attitudes and behaviours</li>
-          <li>how unconscious bias can shape personal and group decision-making and have an impact on people management processes (such as recruitment, performance management, development, reward and promotion), organisational culture and business performance</li>
-          <li>which techniques to use to help you identify, challenge, prevent and remove areas of unconscious bias in the workplace</li>
-        </ul>
 
         <div class="panel-indent">
           <p>This course ends with an assessment. You need to pass with a score of 80% or more to be able to add it to your learning record.</p>
           <p>After completing this course, it may take up to 24 hours for your learning record to be updated.</p>
         </div>
 
-        <button class="button">Start course</button>
-
       </div>
     </div>
 
     <div class="column-third">
+      {% if record.result %}
       <div class="summary-box">
         <h4 class="heading-small summary-box__heading">Status</h4>
-        <!--<table class="key-info-table">
-          <tbody>
+        <table class="key-info-table">
+          <tbody>            
             <tr>
-              <td>Level(s)</td>
-              <td>All</td>
-            </tr>
-            <tr>
-              <td>Cost</td>
-              <td>FREE</td>
+              <td>Score</td>
+              <td>{{ record.result.score.raw}}</td>
             </tr>
             <tr>
               <td>Duration</td>
-              <td>1 hour</td>
+              <td>{{ record.result.duration }}</td>
             </tr>
-            <tr>
-              <td>Key area</td>
-              <td>Core skills</td>
-            </tr>
-          </tbody>
-        </table>-->
-        <table class="key-info-table">
-          <tbody>
-            <tr>
-              <td>Completed</td>
-              <td>22/08/2015</td>
-            </tr>
-            <tr>
-              <td>Score</td>
-              <td>95%</td>
-            </tr>
+            {% if record.result.score.max %}
+              <tr>
+                <td>Percentage</td>
+                <td>{{ ((record.result.score.raw / record.result.score.max) * 100 ) | round }}%</td>
+              </tr>
+              <tr>
+                <td>Score</td>
+                <td>95%</td>
+              </tr>
+            {% endif %}
           </tbody>
         </table>
       </div>
-      {% include "partials/quick-actions.html" ignore missing %}
+      {% endif %}
     </div>
 
   </div>
