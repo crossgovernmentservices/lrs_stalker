@@ -4,3 +4,5 @@ WTForms
 gunicorn
 Flask-Assets
 Flask-Script
+requests
+dateutils
