@@ -61,8 +61,8 @@
                 <td>{{ ((record.result.score.raw / record.result.score.max) * 100 ) | round }}%</td>
               </tr>
               <tr>
-                <td>Score</td>
-                <td>95%</td>
+                <td>Max</td>
+                <td>{{ record.result.score.max }}</td>
               </tr>
             {% endif %}
           </tbody>

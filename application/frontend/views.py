@@ -12,13 +12,13 @@ import requests
 
 frontend = Blueprint('frontend', __name__, template_folder='templates')
 
-username = '8ef61e005f6f2a6df69d827d3a79fe3e3dadb978'
-password = '28f6f89ea6c7bd58b002f84bbaf8b9e04e42bb11'
-url = 'http://csl-lrs.ddns.net/api/v1/statements/aggregate?pipeline=%s'
+username = '53b4c63ea25c4d00d5bb5fc6168e2cfce1f8fc04'
+password = '44d9a94cf85d3d2535e91a45817f58c1021eff9a'
+url = 'https://lrs.cstools.co.uk/api/v1/statements/aggregate?pipeline=%s'
 
 userData = [
-  { "id": "admin", "username": "admin", "fullname": "Ian Learnalot", "email": "ilearnalot@gmail.com" },
-  { "id": "test1", "username": "test1", "fullname": "Andrew Withirsty", "email": "awit@gmail.com" }
+  { "id": "admin", "username": "admin", "fullname": "Ian Learnalot", "email": "ilearnalot@gmail.com" }
+  # { "id": "test1", "username": "test1", "fullname": "Andrew Withirsty", "email": "awit@gmail.com" }
 ]
 
 statementProj = {
@@ -97,6 +97,6 @@ def details(username, statementId):
 
 def queryLRS(payload):
     requestUrl=url % json.dumps(payload)
-    jsonResponse = requests.get(requestUrl, auth=(username, password)) #params=payload)
+    jsonResponse = requests.get(requestUrl, auth=(username, password), verify=False) #params=payload)
     return jsonResponse;
 
