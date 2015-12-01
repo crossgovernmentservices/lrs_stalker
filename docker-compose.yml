@@ -1,0 +1,6 @@
+---
+stalker_build:
+  build: /Users/mikaela/workspace/gds/stalker-build
+  container_name: stalker_prototype
+  ports:
+   - "80:8000"
