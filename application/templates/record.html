@@ -20,7 +20,7 @@
   <header class="header-group">
     <h1 class="sub-heading"><i class="fa fa-laptop"></i><span> {{ record.verb.name }}</span></h1>
     <h2 class="heading-xlarge post-sub-heading"> 
-      {% if 'youtube' in record.object.id %}
+      {% if 'www.youtube' in record.object.id %}
         YouTube video
       {% else %}
         {{ record.object.name }}
@@ -35,7 +35,7 @@
       <div class="text course__description__content">
         <h3 class="heading-large">Description</h3>
 
-        {% if 'youtube' in record.object.id %}
+        {% if 'www.youtube' in record.object.id %}
           <iframe width="640" height="480" src="{{ record.object.id|replace('watch?v=', 'embed/') }}"></iframe>
 
         {% endif %}

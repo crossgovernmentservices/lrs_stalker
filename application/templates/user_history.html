@@ -37,7 +37,7 @@
       <tr>
         <td>{{ statement.when | lrs_date_filter  }}</td>
         <td>
-          {% if 'youtube' in statement.object.id %}
+          {% if 'www.youtube' in statement.object.id %}
             YouTube video (<a href="{{statement.object.id}}" target="_blank">watch it here</a>)
           {% else %}
             {{ statement.object.name }}
