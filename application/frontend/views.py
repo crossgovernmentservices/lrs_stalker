@@ -95,6 +95,11 @@ def details(username, statementId):
   return render_template('record.html', record= jsonData, user= user)
 
 
+@frontend.route('/dev-corner')
+def defCorner():
+  return render_template('dev_corner.html')
+
+
 def queryLRS(payload):
     requestUrl=url % json.dumps(payload)
     jsonResponse = requests.get(requestUrl, auth=(username, password), verify=False) #params=payload)

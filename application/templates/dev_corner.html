@@ -1,0 +1,109 @@
+
+{% extends "base_dev.html" %}
+{% block page_title %}LRS stalking - users{% endblock %}
+
+
+{% block body_content %}
+  
+  <a href="{{ url_for('frontend.users') }}" class="link-back">back to users</a>
+
+  <header class="header-group">
+    <h1 class="sub-heading">Civil Service Learning</h1>
+    <h2 class="heading-xlarge post-sub-heading">Dev corner</h2>
+  </header>
+  
+  <div class="grid-row course__description">
+    <div class="column-two-thirds">
+
+      <div class="text course__description__content">
+        <h3 class="heading-large">Youtube tracking</h3>
+      <div id="player"></div>
+        <script type="text/javascript" src="static/javascripts/vendor/xapiwrapper.min.js"></script>
+        <script type="text/javascript" src="static/javascripts/vendor/xapi-youtube-statements.js"></script>
+
+
+        <script>
+
+          var video = "tlBbt5niQto"; // Change this to your video ID
+
+          // "global" variables read by ADL.XAPIYoutubeStatements
+          ADL.XAPIYoutubeStatements.changeConfig({
+            "actor":  {"mbox":"mailto:admin@example.com", "name":"admin"},
+            "videoActivity": {"id":"https://www.youtube.com/watch?v=" + video, "definition":{"name": {"en-US":video}} }
+          });
+
+          function initYT() {
+            var tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+          }
+
+          var player;
+          function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+              height: '390',
+              width: '640',
+              videoId: video,
+              playerVars: { 'autoplay': 0 },
+              events: {
+                'onReady': ADL.XAPIYoutubeStatements.onPlayerReady,
+                'onStateChange': ADL.XAPIYoutubeStatements.onStateChange
+              }
+            });
+            console.log("init done");
+          }
+          
+          initYT();
+
+
+          // Auth for the LRS
+          var conf = {
+              "endpoint" : "https://lrs.cstools.co.uk/data/xAPI/",
+              "auth" : "Basic " + toBase64("e50cc9ae234aa7c13f5baedea2b09bf465e848d1:44f8c8b1ad884b5dc6ce56829021d970fdfbe60c"),
+          };
+          
+          ADL.XAPIWrapper.changeConfig(conf);
+
+          /*
+           * Custom Callbacks
+           */
+          ADL.XAPIYoutubeStatements.onPlayerReadyCallback = function(stmt) {
+            console.log("on ready callback");
+          }
+
+          // Dispatch Youtube statements with XAPIWrapper
+          ADL.XAPIYoutubeStatements.onStateChangeCallback = function(event, stmt) {
+            console.log(stmt);
+            if (stmt) {
+              stmt['timestamp'] = (new Date()).toISOString();
+              ADL.XAPIWrapper.sendStatement(stmt, function(){});
+            } else {
+              console.warn("no statement found in callback for event: " + event);
+            }
+          }
+
+        </script>
+        
+
+
+
+
+
+
+        <h4 class="heading-medium">Learning Outcomes</h4>
+
+        <div class="panel-indent">
+          <p>This course ends with an assessment. You need to pass with a score of 80% or more to be able to add it to your learning record.</p>
+          <p>After completing this course, it may take up to 24 hours for your learning record to be updated.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+{% endblock %}
+

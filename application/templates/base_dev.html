@@ -1,0 +1,48 @@
+
+{% extends "govuk_template/views/layouts/govuk_template.html" %}
+
+{% block head %}
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <!-- gov uk elements stylesheet -->
+  {% assets "css_govuk_elements" %}
+    <link rel="stylesheet" href="{{ ASSET_URL }}">
+  {% endassets %}
+
+  <!-- this application main stylesheet -->
+  {% assets "css_main" %}
+    <link rel="stylesheet" href="{{ ASSET_URL }}">
+  {% endassets %}
+{% endblock %}
+
+{% block header_class %}with-proposition{% endblock %}
+
+{% block proposition_header %}
+<div class='header-proposition'>
+  <div class='content'>
+    <nav id='proposition-menu'>
+      <a href='/users' id='proposition-name'>Civil Service Learning</a>
+      <ul id="proposition-links">
+        <li><a href="/users">Users</a></li>
+      </ul>
+    </nav>
+  </div>
+</div>
+{% endblock %}
+
+{%block content %}
+  <main id="wrapper" role="main">
+    <div id="content">
+      <!-- <div class="inner-block">
+        <div class="phase-banner">
+          <p>
+            <strong class="phase-tag">ALPHA</strong>
+            <span>This is a prototype service</span>
+          </p>
+        </div>
+      </div> -->
+      {%block body_content %}
+      {% endblock %}
+    </div>
+  </main>
+{% endblock %}
+

@@ -19,7 +19,13 @@
 
   <header class="header-group">
     <h1 class="sub-heading"><i class="fa fa-laptop"></i><span> {{ record.verb.name }}</span></h1>
-    <h2 class="heading-xlarge post-sub-heading"> {{ record.object.name }}</h2>
+    <h2 class="heading-xlarge post-sub-heading"> 
+      {% if 'youtube' in record.object.id %}
+        YouTube video
+      {% else %}
+        {{ record.object.name }}
+      {% endif %}
+      </h2>
   </header>
 
 
@@ -29,7 +35,10 @@
       <div class="text course__description__content">
         <h3 class="heading-large">Description</h3>
 
-        <p>lorem</p>
+        {% if 'youtube' in record.object.id %}
+          <iframe width="640" height="480" src="{{ record.object.id|replace('watch?v=', 'embed/') }}"></iframe>
+
+        {% endif %}
 
         <h4 class="heading-medium">Learning Outcomes</h4>
 
@@ -46,25 +55,27 @@
       <div class="summary-box">
         <h4 class="heading-small summary-box__heading">Status</h4>
         <table class="key-info-table">
-          <tbody>            
-            <tr>
-              <td>Score</td>
-              <td>{{ record.result.score.raw}}</td>
-            </tr>
+          <tbody>
+            {% if record.result.score %}       
+              <tr>
+                <td>Score</td>
+                <td>{{ record.result.score.raw}}</td>
+              </tr>
+              {% if record.result.score.max %}
+                <tr>
+                  <td>Percentage</td>
+                  <td>{{ ((record.result.score.raw / record.result.score.max) * 100 ) | round }}%</td>
+                </tr>
+                <tr>
+                  <td>Max</td>
+                  <td>{{ record.result.score.max }}</td>
+                </tr>
+              {% endif %}
+            {% endif %}
             <tr>
               <td>Duration</td>
               <td>{{ record.result.duration }}</td>
             </tr>
-            {% if record.result.score.max %}
-              <tr>
-                <td>Percentage</td>
-                <td>{{ ((record.result.score.raw / record.result.score.max) * 100 ) | round }}%</td>
-              </tr>
-              <tr>
-                <td>Max</td>
-                <td>{{ record.result.score.max }}</td>
-              </tr>
-            {% endif %}
           </tbody>
         </table>
       </div>

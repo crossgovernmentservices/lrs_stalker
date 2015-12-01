@@ -36,10 +36,17 @@
       {% for statement in statements %}
       <tr>
         <td>{{ statement.when | lrs_date_filter  }}</td>
-        <td>{{ statement.object.name }}</td>
+        <td>
+          {% if 'youtube' in statement.object.id %}
+            YouTube video (<a href="{{statement.object.id}}" target="_blank">watch it here</a>)
+          {% else %}
+            {{ statement.object.name }}
+          {% endif %}
+
+        </td>
         <td>{{ statement.verb.name }}</td>
         <td>
-          {% if statement.result %} 
+          {% if statement.result and statement.result.score %} 
             {% if statement.result.score.max %}
               {{ ((statement.result.score.raw / statement.result.score.max) * 100 ) | round }}%
             {% else %}
