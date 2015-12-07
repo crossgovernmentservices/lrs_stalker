@@ -1,0 +1,10 @@
+---
+
+applications:
+- name: learning_record_viewer
+  domain: trial.cf.paas.alphagov.co.uk
+  buildpack: https://github.com/cloudfoundry/python-buildpack
+  instances: 1
+  env:
+    SETTINGS: config.DevelopmentConfig
+  command: python manage.py server
