@@ -5,16 +5,16 @@ from flask import (
     json,
     jsonify,
     url_for,
-    redirect
+    redirect,
+    current_app as app
 )
 
+
+# from application.config import Config
 import requests
 
 frontend = Blueprint('frontend', __name__, template_folder='templates')
 
-username = '53b4c63ea25c4d00d5bb5fc6168e2cfce1f8fc04'
-password = '44d9a94cf85d3d2535e91a45817f58c1021eff9a'
-url = 'https://lrs.cstools.co.uk/api/v1/statements/aggregate?pipeline=%s'
 
 userData = [
   { "id": "admin", "username": "admin", "fullname": "Ian Learnalot", "email": "ilearnalot@gmail.com" }
@@ -43,15 +43,15 @@ statementProj = {
         "duration": "$statement.result.duration"
       },
       "activities": { 
-          "$map": { 
-            "input": "$statement.context.contextActivities.grouping",
-            "as": "activity",
-            "in": { 
-              "id": "$$activity.id",
-              "name": "$$activity.definition.name.en"
-            } 
-          }
+        "$map": { 
+          "input": "$statement.context.contextActivities.grouping",
+          "as": "activity",
+          "in": { 
+            "id": "$$activity.id",
+            "name": "$$activity.definition.name.en"
+          } 
         }
+      }
     }
 }
 
@@ -101,7 +101,11 @@ def defCorner():
 
 
 def queryLRS(payload):
-    requestUrl=url % json.dumps(payload)
+    username = app.config["LRS_USER"]
+    password = app.config["LRS_PASS"]
+    url = '%s/api/v1/statements/aggregate?pipeline=%s'
+
+    requestUrl=url % (app.config["LRS_URL"], json.dumps(payload))
     jsonResponse = requests.get(requestUrl, auth=(username, password), verify=False) #params=payload)
     return jsonResponse;
 
