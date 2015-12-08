@@ -21,6 +21,9 @@ Set some environment variables. The following is required. Add as needed.
 
 ```
 export SETTINGS='config.DevelopmentConfig'
+export LRS_URL=
+export LRS_USER=
+export LRS_PASS=
 ```
 
 Once that this all done you can:
