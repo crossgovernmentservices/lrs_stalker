@@ -15,13 +15,12 @@ import requests
 
 frontend = Blueprint('frontend', __name__, template_folder='templates')
 
-
 userData = [
   { "id": "admin", "username": "admin", "fullname": "Ian Learnalot", "email": "ilearnalot@gmail.com" }
   # { "id": "test1", "username": "test1", "fullname": "Andrew Withirsty", "email": "awit@gmail.com" }
 ]
 
-statementProj = {
+userStatementProj = {
     "$project": {
       "statementId": "$statement.id",
       "actor": {
@@ -67,7 +66,7 @@ def userHistory(username):
           "statement.actor.name": username
         }
       }, 
-      statementProj,
+      userStatementProj,
       {
         "$sort": { "when": -1 }
       }
@@ -79,6 +78,7 @@ def userHistory(username):
     user = [usr for usr in userData if usr["username"] == username][0]
     return render_template('user_history.html', statements= jsonData, user= user)
 
+
 @frontend.route('/users/<username>/history/<statementId>')
 def details(username, statementId):
   payload = [
@@ -87,7 +87,7 @@ def details(username, statementId):
         "statement.actor.name": username,
         "statement.id": statementId
       }
-    },statementProj
+    },userStatementProj
   ]
   response = queryLRS(payload)
   jsonData = response.json()["result"][0]
