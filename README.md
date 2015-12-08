@@ -29,6 +29,11 @@ export LRS_PASS=
 Once that this all done you can:
 
 ```
+./run.sh
+```
+or
+
+```
 python manage.py server
 ```
 
