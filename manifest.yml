@@ -5,6 +5,8 @@ applications:
   domain: trial.cf.paas.alphagov.co.uk
   buildpack: https://github.com/cloudfoundry/python-buildpack
   instances: 1
-  env:
-    SETTINGS: config.DevelopmentConfig
-  command: python manage.py server
+  timeout: 20
+  command: ./run_prod.sh
+env:
+  SETTINGS: 'application.config.DevelopmentConfig'
+  SASS_PATH: '.'
