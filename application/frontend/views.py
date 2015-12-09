@@ -111,6 +111,28 @@ def details(username, statementId):
   responseDetails = queryLRS(payload_details)
   detailsJsonData = responseDetails.json()["result"]
 
+  for detail in detailsJsonData:
+    learningItem = detail["statement"]["object"]
+    verbId = learningItem["verb"]["id"]
+    objectId = learningItem["object"]["id"]
+
+    payload_detail_lr = [
+      {
+        "$match": {
+          "statement.actor.mbox": "mailto:%s" % user["email"],
+          "statement.verb.id": "%s" % verbId, 
+          "statement.object.id": "%s" % objectId 
+        }
+      },userStatementProj
+    ]
+
+    response_detail_lr = queryLRS(payload_detail_lr)
+    detailsRsJsonData = response_detail_lr.json()["result"]
+
+    if detailsRsJsonData:
+      detail["learningRecords"] = detailsRsJsonData
+    
+
   return render_template('record.html', record= recordJsonData, details= detailsJsonData, user= user)
 
 

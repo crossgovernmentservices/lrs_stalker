@@ -2210,3 +2210,14 @@ input[type=number] {
 .stats {
   margin-top: 1em;
 }
+
+/* line 10 */
+.default-padding {
+  padding: 0 15px;
+}
+
+/* line 13 */
+.complete {
+  font-weight: bold;
+  color: green;
+}

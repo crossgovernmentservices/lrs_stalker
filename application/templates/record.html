@@ -38,30 +38,6 @@
           <h3 class="heading-large">Youtube content</h3>
           <iframe width="640" height="480" src="{{ record.object.id|replace('watch?v=', 'embed/') }}"></iframe>
         {% endif %}
-        
-        {% if details %}
-          <h3 class="heading-large">Learning plan todo</h3>
-          
-          <table>
-            <thead>
-            </thead>
-
-            <tbody>
-              {% for learningItem in details %}
-              <tr>
-                <td><a href="{{ learningItem.statement.object.object.id }}" target="_blank">{{ learningItem.statement.object.object.definition.name["en-US"] }}</a></td>
-                <td>{{ learningItem.statement.object.verb.display["en-US"] }}</td>
-              </tr>
-              {% endfor %}
-
-            </tbody>
-          </table>
-        {% else %}
-          <h3 class="heading-large">Description</h3>
-          <p>Please visit {{ record.verb.name }} <a href="{{ record.object.id }}">{{ record.object.name }}</a>
-        {% endif %}
-
-
 
       </div>
     </div>
@@ -97,6 +73,46 @@
       </div>
       {% endif %}
     </div>
+
+    <div class="default-padding">
+      {% if details %}
+        <h3 class="heading-large">Learning plan todo</h3>
+        
+        <table>
+          <thead>
+          </thead>
+
+          <tbody>
+            {% for learningItem in details %}
+            <tr>
+              <td><a href="{{ learningItem.statement.object.object.id }}" target="_blank">{{ learningItem.statement.object.object.definition.name["en-US"] }}</a></td>
+              <td>to be {{ learningItem.statement.object.verb.display["en-US"] }}</td>
+              <td>
+                {% if learningItem.learningRecords %}
+                  <span class="complete">COMPLETED</span>
+                  <ol>
+                    {% for lr in learningItem.learningRecords %}
+                      <li>
+                        <a href="{{ url_for('frontend.details', username=user.username, statementId=lr.statementId) }}">see the evidence</a> 
+                        from {{ lr.when | lrs_date_filter}}
+                      </li>
+                    {% endfor %}
+                  </ol>
+                  
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+
+          </tbody>
+        </table>
+      {% else %}
+        <h3 class="heading-large">Description</h3>
+        <p>Please visit {{ record.verb.name }} <a href="{{ record.object.id }}">{{ record.object.name }}</a>
+      {% endif %}
+    </div>
+
+
 
     
 
