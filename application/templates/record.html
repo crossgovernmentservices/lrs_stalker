@@ -90,7 +90,7 @@
               <td>
                 {% if learningItem.learningRecords %}
                   <span class="complete">COMPLETED</span>
-                  <ol>
+                  <ol class="evidence-list">
                     {% for lr in learningItem.learningRecords %}
                       <li>
                         <a href="{{ url_for('frontend.details', username=user.username, statementId=lr.statementId) }}">see the evidence</a> 

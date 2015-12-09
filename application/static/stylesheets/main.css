@@ -2221,3 +2221,9 @@ input[type=number] {
   font-weight: bold;
   color: green;
 }
+
+/* line 17 */
+.evidence-list {
+  list-style-type: decimal;
+  list-style-position: inside;
+}
