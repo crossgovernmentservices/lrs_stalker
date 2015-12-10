@@ -5,23 +5,22 @@ from flask import (
     json,
     jsonify,
     url_for,
-    redirect
+    redirect,
+    current_app as app
 )
 
+
+# from application.config import Config
 import requests
 
 frontend = Blueprint('frontend', __name__, template_folder='templates')
 
-username = '53b4c63ea25c4d00d5bb5fc6168e2cfce1f8fc04'
-password = '44d9a94cf85d3d2535e91a45817f58c1021eff9a'
-url = 'https://lrs.cstools.co.uk/api/v1/statements/aggregate?pipeline=%s'
-
 userData = [
-  { "id": "admin", "username": "admin", "fullname": "Ian Learnalot", "email": "ilearnalot@gmail.com" }
+  { "id": "admin", "username": "admin", "fullname": "Ian Learnalot", "email": "ianlearnalot@learninglocker.net" }
   # { "id": "test1", "username": "test1", "fullname": "Andrew Withirsty", "email": "awit@gmail.com" }
 ]
 
-statementProj = {
+userStatementProj = {
     "$project": {
       "statementId": "$statement.id",
       "actor": {
@@ -43,15 +42,15 @@ statementProj = {
         "duration": "$statement.result.duration"
       },
       "activities": { 
-          "$map": { 
-            "input": "$statement.context.contextActivities.grouping",
-            "as": "activity",
-            "in": { 
-              "id": "$$activity.id",
-              "name": "$$activity.definition.name.en"
-            } 
-          }
+        "$map": { 
+          "input": "$statement.context.contextActivities.grouping",
+          "as": "activity",
+          "in": { 
+            "id": "$$activity.id",
+            "name": "$$activity.definition.name.en"
+          } 
         }
+      }
     }
 }
 
@@ -62,12 +61,14 @@ def users():
 
 @frontend.route('/users/<username>/history')
 def userHistory(username):
+    user = [usr for usr in userData if usr["username"] == username][0]
+  
     payload = [{   
         "$match": {
-          "statement.actor.name": username
+          "statement.actor.mbox": "mailto:%s" % user["email"]
         }
       }, 
-      statementProj,
+      userStatementProj,
       {
         "$sort": { "when": -1 }
       }
@@ -76,23 +77,63 @@ def userHistory(username):
     response = queryLRS(payload)
 
     jsonData = response.json()["result"]
-    user = [usr for usr in userData if usr["username"] == username][0]
     return render_template('user_history.html', statements= jsonData, user= user)
+
 
 @frontend.route('/users/<username>/history/<statementId>')
 def details(username, statementId):
+  user = [usr for usr in userData if usr["username"] == username][0]
+  
   payload = [
     {   
       "$match": {
-        "statement.actor.name": username,
+        "statement.actor.mbox": "mailto:%s" % user["email"],
         "statement.id": statementId
       }
-    },statementProj
+    },userStatementProj
   ]
   response = queryLRS(payload)
-  jsonData = response.json()["result"][0]
-  user = [usr for usr in userData if usr["username"] == username][0]
-  return render_template('record.html', record= jsonData, user= user)
+  recordJsonData = response.json()["result"][0]
+
+  payload_details= [
+    {
+       "$match": {
+        "statement.object.actor.mbox": "mailto:%s" % user["email"],
+        "statement.context.contextActivities.grouping": { 
+          "$elemMatch": { 
+            "id": "%s" % recordJsonData["object"]["id"]
+          } 
+        }    
+      }
+    }
+  ]
+
+  responseDetails = queryLRS(payload_details)
+  detailsJsonData = responseDetails.json()["result"]
+
+  for detail in detailsJsonData:
+    learningItem = detail["statement"]["object"]
+    verbId = learningItem["verb"]["id"]
+    objectId = learningItem["object"]["id"]
+
+    payload_detail_lr = [
+      {
+        "$match": {
+          "statement.actor.mbox": "mailto:%s" % user["email"],
+          "statement.verb.id": "%s" % verbId, 
+          "statement.object.id": "%s" % objectId 
+        }
+      },userStatementProj
+    ]
+
+    response_detail_lr = queryLRS(payload_detail_lr)
+    detailsRsJsonData = response_detail_lr.json()["result"]
+
+    if detailsRsJsonData:
+      detail["learningRecords"] = detailsRsJsonData
+    
+
+  return render_template('record.html', record= recordJsonData, details= detailsJsonData, user= user)
 
 
 @frontend.route('/dev-corner')
@@ -100,8 +141,13 @@ def defCorner():
   return render_template('dev_corner.html')
 
 
+
 def queryLRS(payload):
-    requestUrl=url % json.dumps(payload)
-    jsonResponse = requests.get(requestUrl, auth=(username, password), verify=False) #params=payload)
-    return jsonResponse;
+  username = app.config["LRS_USER"]
+  password = app.config["LRS_PASS"]
+  url = '%s/api/v1/statements/aggregate?pipeline=%s'
+
+  requestUrl=url % (app.config["LRS_URL"], json.dumps(payload))
+  jsonResponse = requests.get(requestUrl, auth=(username, password), verify=False) #params=payload)
+  return jsonResponse;
 
